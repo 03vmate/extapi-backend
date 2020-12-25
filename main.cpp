@@ -28,6 +28,7 @@ struct Config {
     string dbName;
     int refreshDelay;
     int blockConfirmerInterval;
+    bool servicemode;
 } config;
 
 struct roundContrib {
@@ -36,8 +37,13 @@ struct roundContrib {
 };
 
 void output(string out) {
-    cout << endl<< out << endl;
-    cout << "command>";
+    if(!config.servicemode) {
+        cout << endl<< out << endl;
+        cout << "command>";
+    }
+    else {
+        cout << out << endl;
+    }
     cout.flush();
 }
 
@@ -91,7 +97,7 @@ void writeSQL(vector<roundContrib>* vect, int* height, long* timestamp, int* rew
 }
 
 void CommandHandler() {
-    while(run) {
+    while(run && !config.servicemode) {
         string command;
         getline(cin, command);
 
@@ -214,6 +220,7 @@ int main() {
     config.dbName = conf["dbName"].as<std::string>();
     config.refreshDelay = stoi(conf["refreshDelay"].as<string>());
     config.blockConfirmerInterval = stoi(conf["blockConfirmerInterval"].as<string>());
+    config.servicemode = conf["servicemode"].as<std::string>() == "1" ? true : false;
 
     sql::Driver *driver;
     sql::Connection *con;
