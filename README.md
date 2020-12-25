@@ -1,13 +1,13 @@
 # extapi-backend
 Official uPlexa Pool extAPI Backend
 
-##DB Setup:
+## DB Setup:
 ```sql
 CREATE TABLE BlockData ( id INT(6) UNSIGNED PRIMARY KEY AUTO_INCREMENT, height INT UNSIGNED, hash CHAR(64), totalScore BIGINT UNSIGNED, timestamp BIGINT unsigned, reward INT unsigned, finder VARCHAR(32), confirmHeight INT UNSIGNED, confirmed TINYINT DEFAULT 0 );
 CREATE TABLE BlockContrib (id INT(6) UNSIGNED PRIMARY KEY AUTO_INCREMENT, address CHAR(98), score INT UNSIGNED, blockID INT UNSIGNED );
 ```
 
-##Configuration
+## Configuration
 config.yaml:
 ```yaml
 #Dvandal API
