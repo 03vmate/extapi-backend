@@ -194,7 +194,7 @@ void BlockConfirmer(sql::Driver* driver, sql::Connection* con) {
                 tokenize(*i, ':', split);
                 string _h = split.back();
                 //Block might not be confirmed/unconfirmed by pool for black fucking magic regions, I hate my life
-                if(split[6] == split[7]) {
+                if(split[5] == split[6]) {
                     log("Block " + _h + " incomplete data, waiting another round for confirmation: " + *i);
                     continue;
                 }
