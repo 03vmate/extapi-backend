@@ -24,4 +24,5 @@ dbName: "extAPI"
 refreshDelay: 1000
 blockConfirmerInterval: 120000`
 servicemode: 1
+logging: 1
 ```
