@@ -29,6 +29,7 @@ struct Config {
     int refreshDelay;
     int blockConfirmerInterval;
     bool servicemode;
+    bool logging;
 } config;
 
 struct roundContrib {
@@ -45,6 +46,16 @@ void output(string out) {
         cout << out << endl;
     }
     cout.flush();
+}
+
+void log(string str) {
+    if(config.logging) {
+        ofstream Log("extapi.log", std::ios_base::app);
+        time_t now = chrono::system_clock::to_time_t(chrono::system_clock::now());
+        string timestring = ctime(&now);
+        Log << "[" << timestring.substr(0, timestring.size()-1) << "]  " << str << "\n";
+        Log.close();
+    }
 }
 
 void writeSQL(vector<roundContrib>* vect, int* height, long* timestamp, int* reward, string* finder, int* confirmHeight, string* hash, bool* solo, sql::Driver* driver, sql::Connection* con) {
@@ -182,12 +193,19 @@ void BlockConfirmer(sql::Driver* driver, sql::Connection* con) {
                 vector<string> split;
                 tokenize(*i, ':', split);
                 string _h = split.back();
+                //Block might not be confirmed/unconfirmed by pool for black fucking magic regions, I hate my life
+                if(split[6] == split[7]) {
+                    log("Block " + _h + " incomplete data, waiting another round for confirmation: " + *i);
+                    continue;
+                }
                 sql::PreparedStatement* prep_stmt;
                 if(split[6] == "0") {
                     prep_stmt = con->prepareStatement("UPDATE BlockData SET confirmed = 1 WHERE height = ?");
+                    log("Block " + _h + " confirmed: " + *i);
                 }
                 else {
                     prep_stmt = con->prepareStatement("UPDATE BlockData SET confirmed = 2 WHERE height = ?");
+                    log("Block " + _h + " orphaned: " + *i);
                 }
                 prep_stmt->setInt(1, stoi(_h));
                 prep_stmt->execute();
@@ -220,7 +238,8 @@ int main() {
     config.dbName = conf["dbName"].as<std::string>();
     config.refreshDelay = stoi(conf["refreshDelay"].as<string>());
     config.blockConfirmerInterval = stoi(conf["blockConfirmerInterval"].as<string>());
-    config.servicemode = conf["servicemode"].as<std::string>() == "1" ? true : false;
+    config.servicemode = conf["servicemode"].as<std::string>() == "1";
+    config.logging = conf["logging"].as<std::string>() == "1";
 
     sql::Driver *driver;
     sql::Connection *con;
@@ -269,6 +288,7 @@ int main() {
             int reward = stats["lastblock"]["reward"];
             int confirmHeight = height + (int)stats["config"]["depth"] + 1;
             output("Detected new block mined: " + to_string(height));
+            log("Detected new block mined: " + to_string(height));
             if(lastMined != 0) writeSQL(&contribs, &height, &timestamp, &reward, &finder, &confirmHeight, &hash, &solo, driver, con);
             lastMined = height;
         }
