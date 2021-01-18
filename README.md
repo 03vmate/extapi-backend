@@ -1,5 +1,6 @@
 # extapi-backend
 Official uPlexa Pool extAPI Backend
+Log data not stored by cryptonote-nodejs-pool to MySQL/MariaDB
 
 ## DB Setup:
 ```sql
