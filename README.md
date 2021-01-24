@@ -1,5 +1,5 @@
 # extapi-backend
-Official uPlexa Pool extAPI Backend  
+extAPI Backend  
 Log data not stored by cryptonote-nodejs-pool to MySQL/MariaDB
 
 ## DB Setup:
@@ -12,13 +12,13 @@ CREATE TABLE BlockContrib (id INT(6) UNSIGNED PRIMARY KEY AUTO_INCREMENT, addres
 config.yaml:
 ```yaml
 #Dvandal API
-apiHost: "https://api.uplexa.online"
-apiPass: "this is not the actual password dw"
+apiHost: "https://api.whatever.com"
+apiPass: "password"
 
 #MariaDB/MySQL DB
 dbHost: "tcp://127.0.0.1:3306"
 dbUser: "root"
-dbPass: "not this either"
+dbPass: "password"
 dbName: "extAPI"
 
 #Misc
